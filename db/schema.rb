@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_05_064639) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_10_110950) do
   create_table "devices", force: :cascade do |t|
+    t.integer "user_id"
     t.text "description"
     t.string "address"
     t.float "maximum_hourly_consumption"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_devices_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -26,7 +28,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_05_064639) do
     t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "access_token"
+    t.index ["access_token"], name: "index_users_on_access_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "devices", "users"
 end

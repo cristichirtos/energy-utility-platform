@@ -1,41 +1,43 @@
-class DevicesController < ApplicationController
-  before_action :check_permission
+class DevicesController < BaseController
+  before_action :check_admin, except: :index
 
+  #TODO: add index for admin and index for client
   def show
-    if device
-      render json: device
+    render json: device
+  end
+
+  def create
+    device = Device.new(device_params)
+
+    if user.save
+      render json: user
     else
-      render json: { error: 'not-found' }.to_json, status: :not_found
+      raise ActiveRecord::RecordInvalid.new(user)
     end
   end
 
-  def create; end
+  def update
+  end
 
-  def update; end
-
-  def destroy; end
+  def destroy
+    render json: device.destroy!
+  end
 
   private
-
-  def check_permission
-    return true if device.user == user || user.admin?
-
-    render json: { error: 'You do not have access rights to view this page' }, status: :forbidden
-  end
-
-  def user
-    return @user if defined?(@user)
-
-    @user = User.find(request.headers['USER_ID'])
-  end
 
   def device
     return @device if defined?(@device)
 
-    @device = User.find(params[:id])
+    @device = Device.find(params[:id])
+
+    raise ActiveRecord::RecordNotFound if @device.nil?
   end
 
   def device_params
-    params.require(:device).permit(:description, :address, :maximum_hourly_consumption)
+    params.require(:device).permit(:user_id, :description, :address, :maximum_hourly_consumption)
+  end
+
+  def check_admin
+    raise ApplicationController::ForbiddenError unless current_user.admin? || current_user.id == device.user_id
   end
 end

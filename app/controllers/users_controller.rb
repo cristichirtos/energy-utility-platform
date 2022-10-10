@@ -1,10 +1,13 @@
-class UsersController < ApplicationController
+class UsersController < BaseController
+  skip_before_action :check_user_logged_in, only: :create
+  before_action :check_user_permission, except: :create
+
+  def index
+    render json: User.all
+  end
+
   def show
-    if user
-      render json: user
-    else
-      render json: { error: 'not-found' }.to_json, status: :not_found
-    end
+    render json: user
   end
 
   def create
@@ -13,23 +16,19 @@ class UsersController < ApplicationController
     if user.save
       render json: user
     else
-      render json: user.errors, status: :unprocessable_entity
+      raise ActiveRecord::RecordInvalid.new(user)
     end
   end
 
   def update
-    return render json: { error: 'not-found' }.to_json, status: :not_found if user.nil?
-
     if user.update(user_params)
       render json: user
     else
-      render json: user.errors, status: :unprocessable_entity
+      raise ActiveRecord::RecordInvalid.new(user)
     end
   end
 
   def destroy
-    return render json: { error: 'not-found' }.to_json, status: :not_found if user.nil?
-
     render json: user.destroy!
   end
 
@@ -39,9 +38,15 @@ class UsersController < ApplicationController
     return @user if defined?(@user)
 
     @user = User.find(params[:id])
+
+    raise ActiveRecord::RecordNotFound if @user.nil?
   end
 
   def user_params
     params.require(:user).permit(:username, :name, :password, :password_confirmation, :admin)
+  end
+
+  def check_user_permission
+    raise ApplicationController::ForbiddenError unless current_user.admin? || current_user.id == params[:id]&.to_i
   end
 end
