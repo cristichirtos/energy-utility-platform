@@ -24,6 +24,6 @@ production:
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  database: energy_utility_platform_prod
-  username: energy_utility_platform
-  rpassword: <%= ENV['ENERGY_UTILITY_PLATFORM_DATABASE_PASSWORD'] %>
+  database: <%= ENV.fetch("DBNAME") %>
+  username: <%= ENV.fetch("DBUSER") %>
+  password: <%= ENV.fetch("DBPASS") %>
