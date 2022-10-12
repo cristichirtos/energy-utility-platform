@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_10_110950) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_12_112857) do
   create_table "devices", force: :cascade do |t|
     t.integer "user_id"
     t.text "description"
@@ -19,6 +19,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_110950) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_devices_on_user_id"
+  end
+
+  create_table "energy_consumption_entries", force: :cascade do |t|
+    t.integer "device_id"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["device_id"], name: "index_energy_consumption_entries_on_device_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -34,4 +42,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_110950) do
   end
 
   add_foreign_key "devices", "users"
+  add_foreign_key "energy_consumption_entries", "devices"
 end

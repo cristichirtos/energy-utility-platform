@@ -1,7 +1,15 @@
 class DevicesController < BaseController
-  before_action :check_admin, except: :index
+  before_action :check_admin, except: :client_index
 
-  #TODO: add index for admin and index for client
+  def admin_index
+    render json: Device.all
+  end
+
+  def client_index
+    render json: Device.includes(:energy_consumption_entries).where(user_id: current_user.id),
+      include: [energy_consumption_entries: { only: %i[created_at value] }]
+  end
+
   def show
     render json: device
   end
@@ -9,14 +17,19 @@ class DevicesController < BaseController
   def create
     device = Device.new(device_params)
 
-    if user.save
-      render json: user
+    if device.save
+      render json: device
     else
-      raise ActiveRecord::RecordInvalid.new(user)
+      raise ActiveRecord::RecordInvalid.new(device)
     end
   end
 
   def update
+    if device.update(device_params)
+      render json: device
+    else
+      raise ActiveRecord::RecordInvalid.new(device)
+    end
   end
 
   def destroy
