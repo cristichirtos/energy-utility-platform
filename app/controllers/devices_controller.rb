@@ -47,7 +47,7 @@ class DevicesController < BaseController
   end
 
   def device_params
-    params.require(:device).permit(:user_id, :description, :address, :maximum_hourly_consumption)
+    params.permit(:user_id, :description, :address, :maximum_hourly_consumption)
   end
 
   def check_admin

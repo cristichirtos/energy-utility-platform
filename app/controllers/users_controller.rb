@@ -43,7 +43,7 @@ class UsersController < BaseController
   end
 
   def user_params
-    params.require(:user).permit(:username, :name, :password, :password_confirmation, :admin)
+    params.permit(:username, :name, :password, :password_confirmation)
   end
 
   def check_user_permission
