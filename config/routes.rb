@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   get 'client/devices', to: 'devices#client_index'
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
+
+  match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
 end
