@@ -1,17 +1,16 @@
 class DevicesController < BaseController
-  before_action :check_admin, except: :client_index
+  before_action :check_admin, except: %i[show client_index]
 
   def admin_index
     render json: Device.all
   end
 
   def client_index
-    render json: Device.includes(:energy_consumption_entries).where(user_id: current_user.id),
-      include: [energy_consumption_entries: { only: %i[created_at value] }]
+    render json: Device.where(user_id: current_user.id)
   end
 
   def show
-    render json: device
+    render json: Device.includes(:energy_consumption_entries).find(params[:id]), include: [energy_consumption_entries: { only: %i[created_at value] }]
   end
 
   def create
@@ -33,17 +32,13 @@ class DevicesController < BaseController
   end
 
   def destroy
-    render json: device.destroy!
+    render json: Device.find(params[:id]).destroy
   end
 
   private
 
   def device
-    return @device if defined?(@device)
-
-    @device = Device.find(params[:id])
-
-    raise ActiveRecord::RecordNotFound if @device.nil?
+    @device ||= Device.find(params[:id])
   end
 
   def device_params

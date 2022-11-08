@@ -3,11 +3,15 @@ class UsersController < BaseController
   before_action :check_user_permission, except: :create
 
   def index
-    render json: User.all
+    if params['for_dropdown'] == 'true'
+      render json: User.where(admin: false).pluck(:id, :username).map {|id, username| { id: id, username: username }}
+    else
+      render json: User.all
+    end
   end
 
   def show
-    render json: user
+    render json: User.find(params[:id])
   end
 
   def create
@@ -29,17 +33,13 @@ class UsersController < BaseController
   end
 
   def destroy
-    render json: user.destroy!
+    render json: User.find(params[:id]).destroy
   end
 
   private
 
   def user
-    return @user if defined?(@user)
-
-    @user = User.find(params[:id])
-
-    raise ActiveRecord::RecordNotFound if @user.nil?
+    @user ||= User.find(params[:id])
   end
 
   def user_params
