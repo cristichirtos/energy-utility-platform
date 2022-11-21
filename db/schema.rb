@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_12_112857) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_21_175433) do
   create_table "devices", force: :cascade do |t|
     t.integer "user_id"
     t.text "description"
@@ -26,6 +26,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_12_112857) do
     t.float "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "day_and_hour"
+    t.index ["device_id", "day_and_hour"], name: "index_energy_consumption_entries_on_device_id_and_day_and_hour", unique: true
     t.index ["device_id"], name: "index_energy_consumption_entries_on_device_id"
   end
 
