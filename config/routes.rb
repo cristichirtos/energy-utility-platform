@@ -6,5 +6,7 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
 
+  mount ActionCable.server => 'cable'
+
   match '*all', controller: 'application', action: 'cors_preflight_check', via: [:options]
 end
