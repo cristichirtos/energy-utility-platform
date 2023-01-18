@@ -1,7 +1,6 @@
 require_relative "boot"
 
 require "rails/all"
-require_relative '../app/proto/app/proto/Messages_services_pb'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
