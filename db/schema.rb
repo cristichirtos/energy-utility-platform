@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_21_175433) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_17_234256) do
   create_table "devices", force: :cascade do |t|
     t.integer "user_id"
     t.text "description"
@@ -31,6 +31,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_21_175433) do
     t.index ["device_id"], name: "index_energy_consumption_entries_on_device_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.integer "sender_id"
+    t.integer "receiver_id"
+    t.boolean "read"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_messages_on_receiver_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "name"
@@ -45,4 +56,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_21_175433) do
 
   add_foreign_key "devices", "users"
   add_foreign_key "energy_consumption_entries", "devices"
+  add_foreign_key "messages", "users", column: "receiver_id"
+  add_foreign_key "messages", "users", column: "sender_id"
 end
